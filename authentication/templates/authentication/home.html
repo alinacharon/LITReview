@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Page d'accueil - LITReview{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-4 text-center">
+            <h2>Inscrivez-vous maintenant</h2>
+            <a href="{% url 'signup' %}" class="btn btn-custom btn-lg mt-3">S'inscrire</a>
+        </div>
+        <div class="col-md-2 d-flex align-items-center justify-content-center">
+            <hr class="vertical-line">
+        </div>
+        <div class="col-md-4">
+            <h2 class="text-center">Connectez-vous</h2>
+            <form method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-custom w-100">Se connecter</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .vertical-line {
+        width: 1px;
+        background-color: #6c757d;
+        height: 100%;
+    }
+</style>
+{% endblock %}

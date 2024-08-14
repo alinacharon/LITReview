@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Fil d'actualités{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Fil d'actualités</h1>
+
+<!-- Posts Section -->
+<div class="list-group">
+    {% for post in posts %}
+    <div class="list-group-item bg-dark text-light mb-2">
+        <h5 class="mb-1">
+            {% if post.title %}
+                {{ post.title }}
+            {% else %}
+                Critique
+            {% endif %}
+        </h5>
+        <p class="mb-1">
+            {% if post.description %}
+                {{ post.description }}
+            {% else %}
+                {{ post.comment }}
+            {% endif %}
+        </p>
+        <small class="text-muted">{{ post.created_at|date:"j F, Y, g:i a" }}</small>
+    </div>
+    {% empty %}
+    <p>Aucun post trouvé.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}
