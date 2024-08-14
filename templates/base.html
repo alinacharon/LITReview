@@ -53,14 +53,36 @@
             border-color: #BB86FC;
         }
 
+        /* Custom Navbar Styles */
+        .navbar-nav {
+            flex-direction: row;
+        }
+        .navbar-brand {
+            flex: 1;
+            text-align: center;
+        }
+        .navbar-collapse {
+            justify-content: center;
+        }
+        .navbar-nav .nav-item {
+            margin-left: 15px;
+        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <div class="navbar-collapse justify-content-center">
+            <div class="navbar-collapse d-flex">
                 <span class="navbar-brand mb-0 h1">LITReview</span>
+                <div class="ms-auto">
+                    {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-custom">Se déconnecter</button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </nav>

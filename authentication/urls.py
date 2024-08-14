@@ -1,7 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import (
-    LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView)
-
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
 import authentication.views
 
 urlpatterns = [
@@ -18,5 +16,4 @@ urlpatterns = [
         template_name='authentication/password_change_done.html'),
          name='password_change_done'),
     path('signup/', authentication.views.signup_page, name='signup'),
-
 ]
