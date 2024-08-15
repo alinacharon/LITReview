@@ -1,33 +1,58 @@
 {% extends 'base.html' %}
 
-{% block title %}Fil d'actualités{% endblock %}
+{% block title %}Flux{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Fil d'actualités</h1>
-
-<!-- Posts Section -->
-<div class="list-group">
-    {% for post in posts %}
-    <div class="list-group-item bg-dark text-light mb-2">
-        <h5 class="mb-1">
-            {% if post.title %}
-                {{ post.title }}
-            {% else %}
-                Critique
-            {% endif %}
-        </h5>
-        <p class="mb-1">
-            {% if post.description %}
-                {{ post.description }}
-            {% else %}
-                {{ post.comment }}
-            {% endif %}
-        </p>
-        <small class="text-muted">{{ post.created_at|date:"j F, Y, g:i a" }}</small>
-    </div>
-    {% empty %}
-    <p>Aucun post trouvé.</p>
-    {% endfor %}
+<div class="text-center mb-4">
+    <a href="{% url 'create_ticket' %}" class="btn btn-custom me-2">Demander une critique</a>
+    <a href="{% url 'create_review_without_ticket' %}" class="btn btn-custom">Créer une critique</a>
+    
 </div>
 
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        {% if posts %}
+            {% for post in posts %}
+                {% if post.type == 'review' %}
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.object.user.username }} a publié une critique</h5>
+                            <p class="card-text">
+                                <strong>{{ post.object.ticket.title }} - 
+                                {% for i in "12345" %}
+                                    {% if i|slice:":1" <= post.object.rating|stringformat:"i" %}
+                                        ★
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                                </strong>
+                            </p>
+                            <p class="card-text">{{ post.object.comment }}</p>
+                            <div class="border p-3 mb-2">
+                                <p class="mb-1"><strong>Ticket - {{ post.object.ticket.user.username }}</strong></p>
+                                <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
+                            </div>
+                            <small class="text-muted">{{ post.object.created_at }}</small>
+                        </div>
+                    </div>
+                {% elif post.type == 'ticket' %}
+                    <div class="card bg-dark text-white mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ post.object.user.username }} a demandé une critique</h5>
+                            <p class="card-text">{{ post.object.title }}</p>
+                            <p class="card-text">{{ post.object.description }}</p>
+                            <div class="text-end">
+                                <a href="{% url 'create_review' post.object.id %}" class="btn btn-custom">Créer une critique</a>
+                            </div>
+                            <small class="text-muted">{{ post.object.created_at }}</small>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p class="text-center">Aucun post trouvé.</p>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

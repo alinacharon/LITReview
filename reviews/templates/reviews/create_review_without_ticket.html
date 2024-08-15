@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4" style="color: white;">Créer une critique (pas en réponse à un ticket)</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card bg-dark mb-4">
+            <div class="card-body" style="color: white;"> 
+                <h3 class="card-title">Livre / Article</h3>
+                <div class="form-group">
+                    {{ ticket_form.title.label_tag }}
+                    {{ ticket_form.title }}
+                </div>
+                <div class="form-group">
+                    {{ ticket_form.description.label_tag }}
+                    {{ ticket_form.description }}
+                </div>
+                <div class="form-group">
+                    {{ ticket_form.image.label_tag }}
+                    {{ ticket_form.image }}
+                </div>
+            </div>
+        </div>
+        <div class="card bg-dark">
+            <div class="card-body" style="color: white;"> 
+                <h3 class="card-title">Critique</h3>
+                <div class="form-group">
+                    {{ review_form.headline.label_tag }}
+                    {{ review_form.headline }}
+                </div>
+                <div class="form-group">
+                    <label>{{ review_form.rating.label }}</label>
+                    <div>
+                        {% for radio in review_form.rating %}
+                            <div class="form-check form-check-inline">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                    {{ radio.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    {{ review_form.comment.label_tag }}
+                    {{ review_form.comment }}
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-custom">Envoyer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

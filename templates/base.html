@@ -1,101 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}LITReview{% endblock %}</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            background-color: #121212;
-            color: #ffffff;
-        }
+      body {
+        background-color: #121212;
+        color: #ffffff;
+      }
 
-        /* Navbar Styles */
-        .navbar-dark .navbar-nav .nav-link {
-            color: rgba(255,255,255,0.75);
-        }
-        .navbar-dark .navbar-nav .nav-link:hover {
-            color: rgba(255,255,255,1);
-        }
+      /* Navbar Styles */
+      .navbar-dark .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .navbar-dark .navbar-nav .nav-link:hover {
+        color: rgba(255, 255, 255, 1);
+      }
+      .navbar-nav {
+        flex-direction: row;
+      }
+      .navbar-brand {
+        flex: 1;
+        text-align: center;
+      }
+      .navbar-collapse {
+        justify-content: center;
+      }
+      .navbar-nav .nav-item {
+        margin-left: 15px;
+      }
 
-        /* Link Styles */
-        a {
-            color: #BB86FC; /* Light Purple for Links */
-            text-decoration: none;
-        }
-        a:hover {
-            color: #ffffff; /* White on Hover */
-            text-decoration: underline;
-        }
+      /* Link Styles */
+      a {
+        color: #bb86fc;
+        text-decoration: none;
+      }
+      a:hover {
+        color: #ffffff;
+        text-decoration: underline;
+      }
 
-        /* Button Styles */
-        .btn-custom {
-            background-color: #BB86FC;
-            color: #121212;
-            border: none;
-        }
-        .btn-custom:hover {
-            background-color: #ffffff;
-            color: #121212;
-        }
+      /* Button Styles */
+      .btn-custom {
+        background-color: #bb86fc;
+        color: #121212;
+        border: none;
+      }
+      .btn-custom:hover {
+        background-color: #ffffff;
+        color: #121212;
+      }
 
-        /* Form Styles */
-        .form-control {
-            background-color: #1F1F1F;
-            color: #ffffff;
-            border: 1px solid #333;
-        }
-        .form-control:focus {
-            background-color: #1F1F1F;
-            color: #ffffff;
-            border-color: #BB86FC;
-        }
-
-        /* Custom Navbar Styles */
-        .navbar-nav {
-            flex-direction: row;
-        }
-        .navbar-brand {
-            flex: 1;
-            text-align: center;
-        }
-        .navbar-collapse {
-            justify-content: center;
-        }
-        .navbar-nav .nav-item {
-            margin-left: 15px;
-        }
+      /* Form Styles */
+      .form-control {
+        background-color: #1f1f1f;
+        color: #ffffff;
+        border: 1px solid #333;
+      }
+      .form-control:focus {
+        background-color: #1f1f1f;
+        color: #ffffff;
+        border-color: #bb86fc;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <div class="navbar-collapse d-flex">
-                <span class="navbar-brand mb-0 h1">LITReview</span>
-                <div class="ms-auto">
-                    {% if user.is_authenticated %}
-                    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-custom">Se déconnecter</button>
-                    </form>
-                    {% endif %}
+            <div class="d-flex w-100 justify-content-between align-items-center">
+                <div class="mx-auto text-center">
+                    <span class="navbar-brand mb-0 h1">LITReview</span>
                 </div>
-            </div>
+        <div
+          class="collapse navbar-collapse justify-content-end order-1 order-lg-1"
+        >
+          {% if user.is_authenticated %}
+          <ul class="navbar-nav me-2">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'feed' %}">Flux</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Posts</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Abonnements</a>
+            </li>
+          </ul>
+          <form method="POST" action="{% url 'logout' %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-custom">Se déconnecter</button>
+          </form>
+          {% endif %}
         </div>
+      </div>
     </nav>
 
     <!-- Content -->
-    <div class="container mt-4">
-        {% block content %}
-        <!-- Page-specific content will go here -->
-        {% endblock %}
-    </div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-</body>
+    <div class="container mt-4">{% block content %} {% endblock %}</div>
+  </body>
 </html>
