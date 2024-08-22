@@ -3,22 +3,63 @@
 {% block title %}Créer une Critique{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Créer une Critique</h1>
+<h1 class="mb-4 text-center">Créer une Critique</h1>
+
+<!-- Displays the book information if available -->
+{% if ticket %}
+<div class="border p-3 mb-4">
+    <div class="d-flex justify-content-between mb-2">
+        <h2 class="mb-2">Vous êtes en train de poster en réponse à</h2>
+        <p class="text-white">{{ ticket.created_at|date:"H:i, d M Y" }}</p>
+    </div>
+    <div class="d-flex align-items-center mb-2">
+        {% if ticket.image %}
+            <img src="{{ ticket.image.url }}" alt="{{ ticket.title }}" class="me-3" style="max-width: 100px;">
+        {% endif %}
+        <div>
+            <p><strong>{{ ticket.user.username }}</strong> a demandé une critique</p>
+            <p><strong>{{ ticket.title }}</strong> - {{ ticket.author }}</p>
+            <p>{{ ticket.description }}</p>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <form method="post">
     {% csrf_token %}
     {% if ticket_id %}
     <input type="hidden" name="ticket_id" value="{{ ticket_id }}">
     {% endif %}
-    <div class="mb-3">
-        <label for="rating" class="form-label">Évaluation</label>
-        <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" required>
+
+    <!-- Critique Section -->
+    <div class="card bg-dark text-white mb-4">
+        <div class="card-header">
+            <h3>Critique</h3>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label for="id_rating" class="form-label">Évaluation</label>
+                <div class="d-flex justify-content-between">
+                    {% for radio in review_form.rating %}
+                        <div class="form-check">
+                            {{ radio.tag }}
+                            <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                {{ radio.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="id_comment" class="form-label">Commentaire</label>
+                {{ review_form.comment }} <!-- Correct rendering of the textarea field -->
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="comment" class="form-label">Commentaire</label>
-        <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+
+    <div class="text-center mt-4">
+        <button type="submit" class="btn btn-custom">Envoyer</button>
     </div>
-    <button type="submit" class="btn btn-custom">Soumettre la Critique</button>
 </form>
 
 {% endblock %}

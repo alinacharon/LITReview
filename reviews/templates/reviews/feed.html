@@ -6,7 +6,6 @@
 <div class="text-center mb-4">
     <a href="{% url 'create_ticket' %}" class="btn btn-custom me-2">Demander une critique</a>
     <a href="{% url 'create_review_without_ticket' %}" class="btn btn-custom">Créer une critique</a>
-    
 </div>
 
 <div class="row">
@@ -32,6 +31,11 @@
                             <div class="border p-3 mb-2">
                                 <p class="mb-1"><strong>Ticket - {{ post.object.ticket.user.username }}</strong></p>
                                 <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
+                            
+                                {% if post.object.ticket.image %}
+                                    <img src="{{ post.object.ticket.image.url }}" alt="{{ post.object.ticket.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                                {% endif %}
+                                
                             </div>
                             <small class="text-muted">{{ post.object.created_at }}</small>
                         </div>
@@ -42,6 +46,10 @@
                             <h5 class="card-title">{{ post.object.user.username }} a demandé une critique</h5>
                             <p class="card-text">{{ post.object.title }}</p>
                             <p class="card-text">{{ post.object.description }}</p>
+                            {% if post.object.image %}
+                                <img src="{{ post.object.image.url }}" alt="{{ post.object.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                            {% endif %}
+                            
                             <div class="text-end">
                                 <a href="{% url 'create_review' post.object.id %}" class="btn btn-custom">Créer une critique</a>
                             </div>

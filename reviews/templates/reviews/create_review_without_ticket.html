@@ -1,39 +1,42 @@
 {% extends 'base.html' %}
 
+{% block title %}Créer une critique{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h2 class="text-center mb-4" style="color: white;">Créer une critique (pas en réponse à un ticket)</h2>
-    <form method="post" enctype="multipart/form-data">
+    <h2 class="text-center mb-4">Créer une critique</h2>
+    <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="card bg-dark mb-4">
-            <div class="card-body" style="color: white;"> 
-                <h3 class="card-title">Livre / Article</h3>
-                <div class="form-group">
-                    {{ ticket_form.title.label_tag }}
+        <div class="card bg-dark text-white mb-4">
+            <div class="card-header">
+                <h3>Livre / Article</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="id_title" class="form-label">{{ ticket_form.title.label }}</label>
                     {{ ticket_form.title }}
                 </div>
-                <div class="form-group">
-                    {{ ticket_form.description.label_tag }}
+                <div class="mb-3">
+                    <label for="id_description" class="form-label">{{ ticket_form.description.label }}</label>
                     {{ ticket_form.description }}
                 </div>
-                <div class="form-group">
-                    {{ ticket_form.image.label_tag }}
+                <div class="mb-3">
+                    <label for="id_image" class="form-label">{{ ticket_form.image.label }}</label>
                     {{ ticket_form.image }}
                 </div>
             </div>
         </div>
-        <div class="card bg-dark">
-            <div class="card-body" style="color: white;"> 
-                <h3 class="card-title">Critique</h3>
-                <div class="form-group">
-                    {{ review_form.headline.label_tag }}
-                    {{ review_form.headline }}
-                </div>
-                <div class="form-group">
-                    <label>{{ review_form.rating.label }}</label>
-                    <div>
+
+        <div class="card bg-dark text-white">
+            <div class="card-header">
+                <h3>Critique</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="id_rating" class="form-label">{{ review_form.rating.label }}</label>
+                    <div class="d-flex justify-content-between">
                         {% for radio in review_form.rating %}
-                            <div class="form-check form-check-inline">
+                            <div class="form-check">
                                 {{ radio.tag }}
                                 <label class="form-check-label" for="{{ radio.id_for_label }}">
                                     {{ radio.choice_label }}
@@ -42,12 +45,13 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="form-group">
-                    {{ review_form.comment.label_tag }}
+                <div class="mb-3">
+                    <label for="id_comment" class="form-label">{{ review_form.comment.label }}</label>
                     {{ review_form.comment }}
                 </div>
             </div>
         </div>
+
         <div class="text-center mt-4">
             <button type="submit" class="btn btn-custom">Envoyer</button>
         </div>

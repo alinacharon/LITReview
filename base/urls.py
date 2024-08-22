@@ -23,7 +23,6 @@ urlpatterns = [
     path('reviews/', include('reviews.urls')), 
 ]
 
-# Добавьте это, если у вас есть настройки для статики и медиафайлов
 from django.conf import settings
 from django.conf.urls.static import static
 

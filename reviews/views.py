@@ -41,16 +41,34 @@ def create_ticket(request):
     return render(request, 'reviews/create_ticket.html')
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Ticket, Review
+from .forms import ReviewForm
+
 @login_required
 def create_review(request, ticket_id=None):
     ticket = get_object_or_404(Ticket, id=ticket_id) 
+
     if request.method == 'POST':
-        rating = request.POST.get('rating')
-        comment = request.POST.get('comment')
-        review = Review.objects.create(
-            user=request.user, ticket=ticket, rating=rating, comment=comment)
-        return redirect('feed')
-    return render(request, 'reviews/create_review.html', {'ticket': ticket})
+        review_form = ReviewForm(request.POST) 
+
+        if review_form.is_valid():
+            review = review_form.save(commit=False)
+            review.user = request.user  
+            review.ticket = ticket  
+            review.save() 
+
+            return redirect('feed')
+    else:
+        review_form = ReviewForm()  
+
+    context = {
+        'ticket': ticket,
+        'review_form': review_form,  
+    }
+    
+    return render(request, 'reviews/create_review.html', context)  
 
 @login_required
 def create_review_without_ticket(request):
@@ -58,12 +76,10 @@ def create_review_without_ticket(request):
         ticket_form = TicketForm(request.POST, request.FILES)
         review_form = ReviewForm(request.POST)
         if ticket_form.is_valid() and review_form.is_valid():
-            # Создаем новый билет
             ticket = ticket_form.save(commit=False)
             ticket.user = request.user
             ticket.save()
             
-            # Создаем новый обзор
             review = review_form.save(commit=False)
             review.user = request.user
             review.ticket = ticket
