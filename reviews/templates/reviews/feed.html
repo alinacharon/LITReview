@@ -15,35 +15,42 @@
                 {% if post.type == 'review' %}
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-body">
-                            <h5 class="card-title">{{ post.object.user.username }} a publié une critique</h5>
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ post.object.user.username }} a publié une critique</h5>
+                                <small class="text-white">{{ post.object.created_at }}</small>
+                            </div>
                             <p class="card-text">
-                                <strong>{{ post.object.ticket.title }} - 
-                                {% for i in "12345" %}
-                                    {% if i|slice:":1" <= post.object.rating|stringformat:"i" %}
-                                        ★
-                                    {% else %}
-                                        ☆
-                                    {% endif %}
-                                {% endfor %}
+                                <strong class="review-headline">
+                                    <span class="headline-text">{{ post.object.headline }}</span>
+                                    <span class="rating-stars">
+                                        {% for i in "12345" %}
+                                            {% if i|slice:":1" <= post.object.rating|stringformat:"i" %}
+                                                ★
+                                            {% else %}
+                                                ☆
+                                            {% endif %}
+                                        {% endfor %}
+                                    </span>
                                 </strong>
                             </p>
                             <p class="card-text">{{ post.object.comment }}</p>
                             <div class="border p-3 mb-2">
                                 <p class="mb-1"><strong>Ticket - {{ post.object.ticket.user.username }}</strong></p>
                                 <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
-                            
+
                                 {% if post.object.ticket.image %}
                                     <img src="{{ post.object.ticket.image.url }}" alt="{{ post.object.ticket.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
                                 {% endif %}
-                                
                             </div>
-                            <small class="text-muted">{{ post.object.created_at }}</small>
                         </div>
                     </div>
                 {% elif post.type == 'ticket' %}
                     <div class="card bg-dark text-white mb-4">
                         <div class="card-body">
-                            <h5 class="card-title">{{ post.object.user.username }} a demandé une critique</h5>
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ post.object.user.username }} a demandé une critique</h5>
+                                <small class="text-white">{{ post.object.created_at }}</small>
+                            </div>
                             <p class="card-text">{{ post.object.title }}</p>
                             <p class="card-text">{{ post.object.description }}</p>
                             {% if post.object.image %}
@@ -53,7 +60,6 @@
                             <div class="text-end">
                                 <a href="{% url 'create_review' post.object.id %}" class="btn btn-custom">Créer une critique</a>
                             </div>
-                            <small class="text-muted">{{ post.object.created_at }}</small>
                         </div>
                     </div>
                 {% endif %}

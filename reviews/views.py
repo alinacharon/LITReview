@@ -1,16 +1,16 @@
-from django.shortcuts import render, redirect,get_object_or_404
-from .models import Ticket, Review
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from .models import Ticket, Review
+from .forms import ReviewForm, TicketForm
 from itertools import chain
-from .forms import TicketForm, ReviewForm
-
 
 @login_required
 def feed(request):
-    user = request.user
-    tickets = Ticket.objects.filter(user=user).order_by('-created_at')
-    reviews = Review.objects.filter(user=user).order_by('-created_at')
+    # Fetch all tickets and reviews
+    tickets = Ticket.objects.all().order_by('-created_at')
+    reviews = Review.objects.all().order_by('-created_at')
 
+    # Combine and sort the posts
     posts = sorted(
         chain(
             [{'type': 'ticket', 'object': ticket} for ticket in tickets],
@@ -40,12 +40,6 @@ def create_ticket(request):
 
     return render(request, 'reviews/create_ticket.html')
 
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Ticket, Review
-from .forms import ReviewForm
-
 @login_required
 def create_review(request, ticket_id=None):
     ticket = get_object_or_404(Ticket, id=ticket_id) 
@@ -57,6 +51,7 @@ def create_review(request, ticket_id=None):
             review = review_form.save(commit=False)
             review.user = request.user  
             review.ticket = ticket  
+            review.headline = review_form.cleaned_data['headline']
             review.save() 
 
             return redirect('feed')
@@ -68,7 +63,7 @@ def create_review(request, ticket_id=None):
         'review_form': review_form,  
     }
     
-    return render(request, 'reviews/create_review.html', context)  
+    return render(request, 'reviews/create_review.html', context)
 
 @login_required
 def create_review_without_ticket(request):
