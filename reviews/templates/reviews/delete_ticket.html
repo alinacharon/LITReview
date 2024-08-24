@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Supprimer le ticket{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card bg-dark text-white">
+        <div class="card-body">
+            <h5 class="card-title">Êtes-vous sûr de vouloir supprimer ce ticket ?</h5>
+            <p class="card-text">Cette action est irréversible.</p>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="text-center">
+                    <button type="submit" name="confirm" value="yes" class="btn btn-danger me-3">Oui</button>
+                    <button type="submit" name="confirm" value="no" class="btn btn-secondary">Non</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

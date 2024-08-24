@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Vos Posts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Vos Posts</h1>
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            {% if posts %}
+                {% for post in posts %}
+                    {% if post.type == 'review' %}
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">Vous avez publié une critique</h5>
+                                    <small class="text-white">{{ post.object.created_at|date:"H:i, d M Y" }}</small>
+                                </div>
+                                <p class="card-text">
+                                    <strong class="review-headline">
+                                        <span class="headline-text">{{ post.object.headline }}</span>
+                                        <span class="rating-stars">
+                                            {% for i in "12345" %}
+                                                {% if i|slice:":1" <= post.object.rating|stringformat:"i" %}
+                                                    ★
+                                                {% else %}
+                                                    ☆
+                                                {% endif %}
+                                            {% endfor %}
+                                        </span>
+                                    </strong>
+                                </p>
+                                <p class="card-text">{{ post.object.comment }}</p>
+                                <div class="border p-3 mb-2">
+                                    <p class="mb-1"><strong>Ticket - {{ post.object.ticket.user.username }}</strong></p>
+                                    <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
+
+                                    {% if post.object.ticket.image %}
+                                        <img src="{{ post.object.ticket.image.url }}" alt="{{ post.object.ticket.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-footer text-end">
+                                <a href="{% url 'edit_review' post.object.id %}" class="btn btn-outline-secondary me-2">Modifier</a>
+                                <a href="{% url 'delete_review' post.object.id %}" class="btn btn-outline-danger">Supprimer</a>
+                            </div>
+                        </div>
+                    {% elif post.type == 'ticket' %}
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <h5 class="card-title">Vous avez publié un ticket</h5>
+                                    <small class="text-white">{{ post.object.created_at|date:"H:i, d M Y" }}</small>
+                                </div>
+                                <p class="card-text">{{ post.object.title }}</p>
+                                <p class="card-text">{{ post.object.description }}</p>
+                                {% if post.object.image %}
+                                    <img src="{{ post.object.image.url }}" alt="{{ post.object.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                                {% endif %}
+                            </div>
+                            <div class="card-footer text-end">
+                                <a href="{% url 'edit_ticket' post.object.id %}" class="btn btn-outline-secondary me-2">Modifier</a>
+                                <a href="{% url 'delete_ticket' post.object.id %}" class="btn btn-outline-danger">Supprimer</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p class="text-center">Vous n'avez publié aucun post.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
