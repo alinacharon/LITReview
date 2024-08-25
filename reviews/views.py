@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Ticket, Review
+from authentication.models import UserFollows
 from .forms import ReviewForm, TicketForm
 from itertools import chain
 from django.http import HttpResponseForbidden
@@ -122,7 +123,7 @@ def edit_ticket(request, ticket_id):
         form = TicketForm(request.POST, request.FILES, instance=ticket)
         if form.is_valid():
             form.save()
-            return redirect('posts')
+            return redirect('user_posts')
     else:
         form = TicketForm(instance=ticket)
 
@@ -140,7 +141,7 @@ def edit_review(request, review_id):
         form = ReviewForm(request.POST, instance=review)
         if form.is_valid():
             form.save()
-            return redirect('posts')
+            return redirect('user_posts')
     else:
         form = ReviewForm(instance=review)
 
@@ -173,3 +174,21 @@ def delete_review(request, review_id):
             return redirect('user_posts')
 
     return render(request, 'reviews/delete_review.html', {'review': review})
+
+def follows_feed(request):
+    # Get the list of users the current user is following
+    following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
+
+    # Filter tickets and reviews only by those users
+    tickets = Ticket.objects.filter(user__in=following_users)
+    reviews = Review.objects.filter(user__in=following_users)
+
+    # Combine the tickets and reviews into a single list and sort by creation date
+    posts = sorted(
+        [{'type': 'ticket', 'object': ticket} for ticket in tickets] +
+        [{'type': 'review', 'object': review} for review in reviews],
+        key=lambda x: x['object'].created_at,
+        reverse=True
+    )
+
+    return render(request, 'reviews/follows_feed.html', {'posts': posts})

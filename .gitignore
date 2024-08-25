@@ -10,8 +10,6 @@ __pycache__/
 *.pot
 *.pyc
 *.pyo
-*.sqlite3
-*.db
 
 # Ignore Django migrations
 **/migrations/**
@@ -27,10 +25,6 @@ venv/
 
 # Ignore local settings and configs
 local_settings.py
-
-# Ignore the database
-*.sqlite3
-*.db
 
 # Ignore media files
 media/

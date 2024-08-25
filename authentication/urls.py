@@ -1,6 +1,7 @@
 from django.urls import path
-from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView, PasswordChangeDoneView
+from django.contrib.auth.views import LoginView, LogoutView
 import authentication.views
+
 
 urlpatterns = [
     path('', authentication.views.home_page, name='home'),
@@ -9,11 +10,7 @@ urlpatterns = [
         redirect_authenticated_user=True),
          name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('change-password/', PasswordChangeView.as_view(
-        template_name='authentication/password_change_form.html'),
-         name='password_change'),
-    path('change-password-done/', PasswordChangeDoneView.as_view(
-        template_name='authentication/password_change_done.html'),
-         name='password_change_done'),
     path('signup/', authentication.views.signup_page, name='signup'),
+    path('manage-follows/', authentication.views.manage_follows, name='manage_follows'),
+    path('unsubscribe/<int:user_id>/', authentication.views.unsubscribe, name='unsubscribe'),
 ]

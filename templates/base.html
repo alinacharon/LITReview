@@ -85,13 +85,16 @@
           {% if user.is_authenticated %}
           <ul class="navbar-nav me-2">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'feed' %}">Flux</a>
+              <a class="nav-link" href="{% url 'feed' %}">Actualité</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'follows_feed' %}">Flux</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'user_posts' %}">Posts</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Abonnements</a>
+              <a class="nav-link" href="{% url 'manage_follows'%}">Abonnements</a>
             </li>
           </ul>
           <form method="POST" action="{% url 'logout' %}" class="d-inline">

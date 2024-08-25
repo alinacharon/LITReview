@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier votre ticket{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Modifier votre ticket</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_title" class="form-label">Titre</label>
+            <input type="text" name="title" class="form-control" id="id_title" value="{{ form.title.value }}">
+        </div>
+        
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Description</label>
+            <textarea name="description" class="form-control" id="id_description" rows="5">{{ form.description.value }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_image" class="form-label">Image</label>
+            {% if ticket.image %}
+                <div class="mt-2 mb-2">
+                    <img src="{{ ticket.image.url }}" alt="Image actuelle" class="img-thumbnail" style="max-width: 150px;">
+                </div>
+            {% endif %}
+            <input type="file" name="image" class="form-control" id="id_image">
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary">Envoyer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

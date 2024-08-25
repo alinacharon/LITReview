@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Modifier votre critique{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Modifier votre critique</h2>
+    
+    <div class="card bg-dark text-white mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Vous êtes en train de poster en réponse à</h5>
+            <div class="border p-3 mb-2">
+                <p><strong>{{ review.ticket.user.username }}</strong> a demandé une critique</p>
+                <p>{{ review.ticket.title }}</p>
+                <p>{{ review.ticket.description }}</p>
+                {% if review.ticket.image %}
+                    <div class="mt-2 mb-2 text-center">
+                        <img src="{{ review.ticket.image.url }}" alt="{{ review.ticket.title }}" class="img-thumbnail" style="max-width: 150px;">
+                    </div>
+                {% endif %}
+                <small class="text-white">{{ review.ticket.created_at|date:"H:i, d M Y" }}</small>
+            </div>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-4">
+            <label for="id_headline" class="form-label">Titre</label>
+            <input type="text" name="headline" class="form-control bg-dark text-white" id="id_headline" value="{{ form.headline.value }}">
+        </div>
+        
+        <div class="mb-4">
+            <label class="form-label">Note</label>
+            <div>
+                {% for i in "012345" %}
+                    <label class="me-2 text-white">
+                        <input type="radio" name="rating" value="{{ i }}" {% if form.rating.value|stringformat:"i" == i %}checked{% endif %}> 
+                        - {{ i }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <label for="id_comment" class="form-label">Commentaire</label>
+            <textarea name="comment" class="form-control bg-dark text-white" id="id_comment" rows="4">{{ form.comment.value }}</textarea>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-custom">Envoyer</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
