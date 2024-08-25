@@ -176,14 +176,10 @@ def delete_review(request, review_id):
     return render(request, 'reviews/delete_review.html', {'review': review})
 
 def follows_feed(request):
-    # Get the list of users the current user is following
     following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
 
-    # Filter tickets and reviews only by those users
     tickets = Ticket.objects.filter(user__in=following_users)
     reviews = Review.objects.filter(user__in=following_users)
-
-    # Combine the tickets and reviews into a single list and sort by creation date
     posts = sorted(
         [{'type': 'ticket', 'object': ticket} for ticket in tickets] +
         [{'type': 'review', 'object': review} for review in reviews],
