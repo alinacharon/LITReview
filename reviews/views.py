@@ -175,16 +175,21 @@ def delete_review(request, review_id):
 
     return render(request, 'reviews/delete_review.html', {'review': review})
 
+@login_required
 def follows_feed(request):
     following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
-
     tickets = Ticket.objects.filter(user__in=following_users)
-    reviews = Review.objects.filter(user__in=following_users)
+    reviews = Review.objects.filter(user__in=following_users).exclude(user=request.user).order_by('-created_at')
+    user_tickets = Ticket.objects.filter(user=request.user)
+    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
+
     posts = sorted(
         [{'type': 'ticket', 'object': ticket} for ticket in tickets] +
-        [{'type': 'review', 'object': review} for review in reviews],
+        [{'type': 'review', 'object': review} for review in reviews] +
+        [{'type': 'review', 'object': review} for review in reviews_on_user_tickets],
         key=lambda x: x['object'].created_at,
         reverse=True
     )
 
     return render(request, 'reviews/follows_feed.html', {'posts': posts})
+
