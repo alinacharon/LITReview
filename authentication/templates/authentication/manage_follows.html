@@ -20,10 +20,10 @@
     {% endif %}
 
     <!-- Form to follow new users -->
-    <div class="d-flex justify-content-center mb-5" style="max-width: 500px; margin: 0 auto;">
-        <form method="post" class="d-flex justify-content-center w-100">
+    <div class="d-flex justify-content-center mb-5">
+        <form method="post" class="d-flex justify-content-center">
             {% csrf_token %}
-            <input type="text" name="username" class="form-control me-2" placeholder="Nom d'utilisateur" required>
+            <input type="text" name="username" class="form-control me-2 placeholder-color" placeholder="Nom d'utilisateur" required>
             <button type="submit" class="btn btn-custom">Suivre</button>
         </form>
     </div>

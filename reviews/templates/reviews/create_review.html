@@ -61,7 +61,10 @@
         </div>
     </div>
 
-    <div class="text-center mt-4">
+    <div class="mb-3">
+        {% if previous_url %}
+        <a href="{{ previous_url }}" class="btn btn-custom me-2">Retour</a>
+    {% endif %}
         <button type="submit" class="btn btn-custom">Envoyer</button>
     </div>
 </form>

@@ -15,7 +15,11 @@
             <label for="password" class="form-label">Mot de passe</label>
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
-        <button type="submit" class="btn btn-custom w-100">Connexion</button>
+        <div class="mb-3">
+            <a href="{% url 'home' %}" class="btn btn-custom">Retour</a>
+            <button type="submit" class="btn btn-custom">Connexion</button>
+        </div>
+        
     </form>
 </div>
 {% endblock %}
