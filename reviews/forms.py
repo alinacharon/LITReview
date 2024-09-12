@@ -2,6 +2,13 @@ from django import forms
 from .models import Review, Ticket
 
 class ReviewForm(forms.ModelForm):
+    """
+    A form for creating and editing reviews.
+
+    This form includes fields for rating, headline, and comment.
+    The rating field is implemented as a set of radio buttons.
+    """
+
     RATING_CHOICES = [(i, str(i)) for i in range(6)]  
     rating = forms.ChoiceField(
         choices=RATING_CHOICES, 
@@ -16,6 +23,7 @@ class ReviewForm(forms.ModelForm):
         }),
         label='Titre de la critique'
     )
+    
     class Meta:
         model = Review
         fields = ['rating', 'headline', 'comment'] 
@@ -31,6 +39,13 @@ class ReviewForm(forms.ModelForm):
         }
 
 class TicketForm(forms.ModelForm):
+    """
+    A form for creating and editing tickets.
+
+    This form includes fields for title, description, and image.
+    All fields are styled using Bootstrap classes.
+    """
+
     class Meta:
         model = Ticket
         fields = ['title', 'description', 'image']

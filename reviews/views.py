@@ -8,6 +8,15 @@ from django.http import HttpResponseForbidden
 
 @login_required
 def feed(request):
+    """
+    Display a feed of all tickets and reviews, sorted by creation date.
+    
+    Args:
+        request: The HTTP request object.
+    
+    Returns:
+        Rendered feed.html template with sorted posts.
+    """
     tickets = Ticket.objects.all().order_by('-created_at')
     reviews = Review.objects.all().order_by('-created_at')
 
@@ -25,6 +34,15 @@ def feed(request):
 
 @login_required
 def create_ticket(request):
+    """
+    Handle the creation of a new ticket.
+    
+    Args:
+        request: The HTTP request object.
+    
+    Returns:
+        Redirect to feed on successful creation, or render create_ticket.html template.
+    """
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
@@ -43,6 +61,16 @@ def create_ticket(request):
 
 @login_required
 def create_review(request, ticket_id=None):
+    """
+    Handle the creation of a new review for a specific ticket.
+    
+    Args:
+        request: The HTTP request object.
+        ticket_id: The ID of the ticket to review (optional).
+    
+    Returns:
+        Redirect to feed on successful creation, or render create_review.html template.
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id) 
 
     if request.method == 'POST':
@@ -69,6 +97,15 @@ def create_review(request, ticket_id=None):
 
 @login_required
 def create_review_without_ticket(request):
+    """
+    Handle the creation of a new review along with a new ticket.
+    
+    Args:
+        request: The HTTP request object.
+    
+    Returns:
+        Redirect to feed on successful creation, or render create_review_without_ticket.html template.
+    """
     if request.method == 'POST':
         ticket_form = TicketForm(request.POST, request.FILES)
         review_form = ReviewForm(request.POST)
@@ -95,6 +132,15 @@ def create_review_without_ticket(request):
 
 @login_required
 def user_posts(request):
+    """
+    Display all posts (tickets and reviews) created by the current user.
+    
+    Args:
+        request: The HTTP request object.
+    
+    Returns:
+        Rendered posts.html template with user's posts.
+    """
     user = request.user
     
     tickets = Ticket.objects.filter(user=user).order_by('-created_at')
@@ -114,6 +160,16 @@ def user_posts(request):
 
 @login_required
 def edit_ticket(request, ticket_id):
+    """
+    Handle the editing of an existing ticket.
+    
+    Args:
+        request: The HTTP request object.
+        ticket_id: The ID of the ticket to edit.
+    
+    Returns:
+        Redirect to user_posts on successful edit, or render edit_ticket.html template.
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
     if ticket.user != request.user:
@@ -132,6 +188,16 @@ def edit_ticket(request, ticket_id):
 
 @login_required
 def edit_review(request, review_id):
+    """
+    Handle the editing of an existing review.
+    
+    Args:
+        request: The HTTP request object.
+        review_id: The ID of the review to edit.
+    
+    Returns:
+        Redirect to user_posts on successful edit, or render edit_review.html template.
+    """
     review = get_object_or_404(Review, id=review_id)
 
     if review.user != request.user:
@@ -150,6 +216,16 @@ def edit_review(request, review_id):
 
 @login_required
 def delete_ticket(request, ticket_id):
+    """
+    Handle the deletion of an existing ticket.
+    
+    Args:
+        request: The HTTP request object.
+        ticket_id: The ID of the ticket to delete.
+    
+    Returns:
+        Redirect to user_posts on successful deletion, or render delete_ticket.html template.
+    """
     ticket = get_object_or_404(Ticket, id=ticket_id)
 
     if request.method == 'POST':
@@ -164,6 +240,16 @@ def delete_ticket(request, ticket_id):
 
 @login_required
 def delete_review(request, review_id):
+    """
+    Handle the deletion of an existing review.
+    
+    Args:
+        request: The HTTP request object.
+        review_id: The ID of the review to delete.
+    
+    Returns:
+        Redirect to user_posts on successful deletion, or render delete_review.html template.
+    """
     review = get_object_or_404(Review, id=review_id)
 
     if request.method == 'POST':
@@ -177,6 +263,15 @@ def delete_review(request, review_id):
 
 @login_required
 def follows_feed(request):
+    """
+    Display a feed of posts from users followed by the current user and reviews on the user's tickets.
+    
+    Args:
+        request: The HTTP request object.
+    
+    Returns:
+        Rendered follows_feed.html template with sorted posts from followed users and reviews on user's tickets.
+    """
     following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
     tickets = Ticket.objects.filter(user__in=following_users)
     reviews = Review.objects.filter(user__in=following_users).exclude(user=request.user).order_by('-created_at')
