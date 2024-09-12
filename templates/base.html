@@ -10,16 +10,16 @@
     />
     <style>
       body {
-        background-color: #121212;
+        background-color: #292c32;
         color: #ffffff;
       }
 
       /* Navbar Styles */
       .navbar-dark .navbar-nav .nav-link {
-        color: rgba(255, 255, 255, 0.45);
+        color: rgba(255, 255, 255, 0.7);
       }
       .navbar-dark .navbar-nav .nav-link:hover {
-        color: rgba(255, 255, 255, 1);
+        color: #FFBC8F;
       }
       .navbar-nav {
         flex-direction: row;
@@ -36,35 +36,87 @@
 
       /* Button Styles */
       .btn-custom {
-        background-color: #bb86fc;
+        background-color: #FFBC8F;
         color: #121212;
         border: none;
       }
       .btn-custom:hover {
         background-color: #ffffff;
-        color: #121212;
+        color: #FFBC8F;
       }
 
       /* Form Styles */
       .form-control {
-        background-color: #1f1f1f;
+        background-color: #484b51;
         color: #ffffff;
         border: 1px solid #333;
       }
       .form-control:focus {
-        background-color: #1f1f1f;
+        background-color: #5f636b;
         color: #ffffff;
-        border-color: #bb86fc;
+        border-color: #FFBC8F;
       }
       .placeholder-color::placeholder {
         color: rgba(204, 202, 202, 0.2);
-    }
-    /* Vertical line at home page */
-    .vertical-line {
-      width: 1px;
-      background-color: #6c757d;
-      height: 100%;
-  }
+      }
+
+      /* Vertical line at home page */
+      .vertical-line {
+        width: 1px;
+        background-color: #6c757d;
+        height: 100%;
+      }
+
+      /* Styles for review and ticket cards */
+      .card {
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 1.5rem;
+        background-color: #26282b;
+        color: #e9edf5;
+      }
+
+      .review-headline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .headline-text {
+        flex-grow: 1;
+      }
+
+      .rating-stars {
+        font-size: 1.2em;
+        color: #FFBC8F;
+      }
+
+      /* Styles for images in cards */
+      .card img.img-thumbnail {
+        max-width: 150px;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      /* Styles for buttons in the feed */
+      .btn-custom-group {
+        margin-bottom: 1.5rem;
+      }
+
+      /* Styles for the main container */
+      .main-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      /* Styles for the center column */
+      .center-column {
+        width: 100%;
+        max-width: 800px;
+      }
     </style>
   </head>
   <body>
@@ -86,7 +138,7 @@
               <a class="nav-link" href="{% url 'feed' %}">Actualité</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'follows_feed' %}">Flux</a>
+              <a class="nav-link" href="{% url 'follows_feed' %}">Feed</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'user_posts' %}">Posts</a>

@@ -3,17 +3,17 @@
 {% block title %}Flux{% endblock %}
 
 {% block content %}
-<div class="text-center mb-4">
-    <a href="{% url 'create_ticket' %}" class="btn btn-custom me-2">Demander une critique</a>
-    <a href="{% url 'create_review_without_ticket' %}" class="btn btn-custom">Créer une critique</a>
-</div>
+<div class="main-container">
+    <div class="btn-custom-group text-center">
+        <a href="{% url 'create_ticket' %}" class="btn btn-custom me-2">Demander une critique</a>
+        <a href="{% url 'create_review_without_ticket' %}" class="btn btn-custom">Créer une critique</a>
+    </div>
 
-<div class="row">
-    <div class="col-md-8 offset-md-2">
+    <div class="center-column">
         {% if posts %}
             {% for post in posts %}
                 {% if post.type == 'review' %}
-                    <div class="card bg-dark text-white mb-4">
+                    <div class="card">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <h5 class="card-title">{{ post.object.user.username }} a publié une critique</h5>
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 {% elif post.type == 'ticket' %}
-                    <div class="card bg-dark text-white mb-4">
+                    <div class="card bg-dark text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <h5 class="card-title">{{ post.object.user.username }} a demandé une critique</h5>
