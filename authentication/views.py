@@ -76,13 +76,13 @@ def manage_follows(request):
             if user_to_follow != request.user:
                 UserFollows.objects.create(
                     user=request.user, followed_user=user_to_follow)
-                messages.success(request, f"You are now following {username}.")
+                messages.success(request, f"Vous suivez maintenant {username}.")
             else:
-                messages.warning(request, "You cannot follow yourself.")
+                messages.warning(request, "Vous ne pouvez pas suivre vous-même.")
         except User.DoesNotExist:
-            messages.error(request, f"User '{username}' does not exist.")
+            messages.warning(request, f"L'utilisateur '{username}' n'existe pas.")
         except IntegrityError:
-            messages.warning(request, f"You are already following {username}.")
+            messages.warning(request, f"Vous suivez déjà {username}.")
 
     following = UserFollows.objects.filter(user=request.user)
     followers = UserFollows.objects.filter(followed_user=request.user)
