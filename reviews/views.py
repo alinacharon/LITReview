@@ -9,28 +9,29 @@ from django.http import HttpResponseForbidden
 @login_required
 def feed(request):
     """
-    Display a feed of all tickets and reviews, sorted by creation date.
+    Display a feed of posts from users followed by the current user and reviews on the user's tickets.
     
     Args:
         request: The HTTP request object.
     
     Returns:
-        Rendered feed.html template with sorted posts.
+        Rendered follows_feed.html template with sorted posts from followed users and reviews on user's tickets.
     """
-    tickets = Ticket.objects.all().order_by('-created_at')
-    reviews = Review.objects.all().order_by('-created_at')
+    following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
+    tickets = Ticket.objects.filter(user__in=following_users)
+    reviews = Review.objects.filter(user__in=following_users).exclude(user=request.user).order_by('-created_at')
+    user_tickets = Ticket.objects.filter(user=request.user)
+    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
 
     posts = sorted(
-        chain(
-            [{'type': 'ticket', 'object': ticket} for ticket in tickets],
-            [{'type': 'review', 'object': review} for review in reviews],
-        ),
-        key=lambda post: post['object'].created_at,
+        [{'type': 'ticket', 'object': ticket} for ticket in tickets] +
+        [{'type': 'review', 'object': review} for review in reviews] +
+        [{'type': 'review', 'object': review} for review in reviews_on_user_tickets],
+        key=lambda x: x['object'].created_at,
         reverse=True
     )
 
     return render(request, 'reviews/feed.html', {'posts': posts})
-
 
 @login_required
 def create_ticket(request):
@@ -250,7 +251,7 @@ def delete_review(request, review_id):
     Returns:
         Redirect to user_posts on successful deletion, or render delete_review.html template.
     """
-    review = get_object_or_404(Review, id=review_id)
+    review = get_object_or_404(Review, id=review_id, user=request.user)
 
     if request.method == 'POST':
         if request.POST.get('confirm') == 'yes':
@@ -261,30 +262,4 @@ def delete_review(request, review_id):
 
     return render(request, 'reviews/delete_review.html', {'review': review})
 
-@login_required
-def follows_feed(request):
-    """
-    Display a feed of posts from users followed by the current user and reviews on the user's tickets.
-    
-    Args:
-        request: The HTTP request object.
-    
-    Returns:
-        Rendered follows_feed.html template with sorted posts from followed users and reviews on user's tickets.
-    """
-    following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
-    tickets = Ticket.objects.filter(user__in=following_users)
-    reviews = Review.objects.filter(user__in=following_users).exclude(user=request.user).order_by('-created_at')
-    user_tickets = Ticket.objects.filter(user=request.user)
-    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
-
-    posts = sorted(
-        [{'type': 'ticket', 'object': ticket} for ticket in tickets] +
-        [{'type': 'review', 'object': review} for review in reviews] +
-        [{'type': 'review', 'object': review} for review in reviews_on_user_tickets],
-        key=lambda x: x['object'].created_at,
-        reverse=True
-    )
-
-    return render(request, 'reviews/follows_feed.html', {'posts': posts})
 

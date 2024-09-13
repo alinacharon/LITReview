@@ -130,10 +130,7 @@
           {% if user.is_authenticated %}
           <ul class="navbar-nav me-2">
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'feed' %}">Actualité</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'follows_feed' %}">Feed</a>
+              <a class="nav-link" href="{% url 'feed' %}">Feed</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'user_posts' %}">Posts</a>

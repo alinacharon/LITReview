@@ -11,6 +11,5 @@ urlpatterns = [
     path('edit-review/<int:review_id>/', views.edit_review, name='edit_review'),   
     path('delete-ticket/<int:ticket_id>/', views.delete_ticket, name='delete_ticket'),   
     path('delete-review/<int:review_id>/', views.delete_review, name='delete_review'), 
-    path('follows_feed/', views.follows_feed, name='follows_feed'), 
 ]
 

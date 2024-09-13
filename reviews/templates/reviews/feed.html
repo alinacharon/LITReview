@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Actualité{% endblock %}
+{% block title %}Flux{% endblock %}
 
 {% block content %}
 <div class="main-container">
-    <h1 class="text-center my-4">Livres du moment</h1>
+    <div class="btn-custom-group text-center">
+        <a href="{% url 'create_ticket' %}" class="btn btn-custom me-2">Demander une critique</a>
+        <a href="{% url 'create_review_without_ticket' %}" class="btn btn-custom">Créer une critique</a>
+    </div>
 
     <div class="center-column">
         {% if posts %}
@@ -36,8 +39,26 @@
                                 <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
 
                                 {% if post.object.ticket.image %}
-                                    <img src="{{ post.object.ticket.image.url }}" alt="{{ post.object.ticket.title }}" class="img-thumbnail">
+                                    <img src="{{ post.object.ticket.image.url }}" alt="{{ post.object.ticket.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
                                 {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% elif post.type == 'ticket' %}
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="card-title">{{ post.object.user.username }} a demandé une critique</h5>
+                                <small class="text-white">{{ post.object.created_at }}</small>
+                            </div>
+                            <p class="card-text">{{ post.object.title }}</p>
+                            <p class="card-text">{{ post.object.description }}</p>
+                            {% if post.object.image %}
+                                <img src="{{ post.object.image.url }}" alt="{{ post.object.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                            {% endif %}
+                            
+                            <div class="text-end">
+                                <a href="{% url 'create_review' post.object.id %}" class="btn btn-custom">Créer une critique</a>
                             </div>
                         </div>
                     </div>
