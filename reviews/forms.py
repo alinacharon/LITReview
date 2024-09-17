@@ -1,6 +1,7 @@
 from django import forms
 from .models import Review, Ticket
 
+
 class ReviewForm(forms.ModelForm):
     """
     A form for creating and editing reviews.
@@ -9,9 +10,9 @@ class ReviewForm(forms.ModelForm):
     The rating field is implemented as a set of radio buttons.
     """
 
-    RATING_CHOICES = [(i, str(i)) for i in range(6)]  
+    RATING_CHOICES = [(i, str(i)) for i in range(6)]
     rating = forms.ChoiceField(
-        choices=RATING_CHOICES, 
+        choices=RATING_CHOICES,
         widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
         label='Note'
     )
@@ -23,10 +24,10 @@ class ReviewForm(forms.ModelForm):
         }),
         label='Titre de la critique'
     )
-    
+
     class Meta:
         model = Review
-        fields = ['rating', 'headline', 'comment'] 
+        fields = ['rating', 'headline', 'comment']
         widgets = {
             'comment': forms.Textarea(attrs={
                 'class': 'form-control',
@@ -37,6 +38,7 @@ class ReviewForm(forms.ModelForm):
         labels = {
             'comment': 'Commentaire'
         }
+
 
 class TicketForm(forms.ModelForm):
     """

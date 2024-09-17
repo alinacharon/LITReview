@@ -19,14 +19,18 @@ def feed(request):
     """
     following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
     tickets = Ticket.objects.filter(user__in=following_users)
-    reviews = Review.objects.filter(user__in=following_users).exclude(user=request.user).order_by('-created_at')
+    reviews = Review.objects.filter(user__in=following_users)
     user_tickets = Ticket.objects.filter(user=request.user)
-    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
+    user_reviews = Review.objects.filter(user=request.user)
+
+    # Получаем все тикеты, на которые пользователь уже оставил отзыв
+    user_reviewed_tickets = Review.objects.filter(user=request.user).values_list('ticket', flat=True)
 
     posts = sorted(
-        [{'type': 'ticket', 'object': ticket} for ticket in tickets] +
+        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in tickets] +
         [{'type': 'review', 'object': review} for review in reviews] +
-        [{'type': 'review', 'object': review} for review in reviews_on_user_tickets],
+        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in user_tickets] +
+        [{'type': 'review', 'object': review} for review in user_reviews],
         key=lambda x: x['object'].created_at,
         reverse=True
     )
@@ -34,66 +38,90 @@ def feed(request):
     return render(request, 'reviews/feed.html', {'posts': posts})
 
 @login_required
-def create_ticket(request):
+def manage_ticket(request, ticket_id=None):
     """
-    Handle the creation of a new ticket.
+    Handle the creation and editing of a ticket.
     
     Args:
         request: The HTTP request object.
+        ticket_id: The ID of the ticket to edit (optional for creating a new ticket).
     
     Returns:
-        Redirect to feed on successful creation, or render create_ticket.html template.
+        Redirect to feed on successful creation or user_posts on successful edit,
+        or render the appropriate template.
     """
+
+    if ticket_id:
+        ticket = get_object_or_404(Ticket, id=ticket_id)
+        if ticket.user != request.user:
+            return HttpResponseForbidden("Vous ne pouvez pas modifier ce ticket.")
+    else:
+        ticket = None
+
     if request.method == 'POST':
-        title = request.POST['title']
-        description = request.POST['description']
-        image = request.FILES.get('image')
+        form = TicketForm(request.POST, request.FILES, instance=ticket)
+        if form.is_valid():
+            new_ticket = form.save(commit=False)
+            if ticket is None:  
+                new_ticket.user = request.user
+            new_ticket.save()
+            if ticket is None:
+                return redirect('feed') 
+            else:
+                return redirect('user_posts') 
+    else:
+        form = TicketForm(instance=ticket)
 
-        ticket = Ticket.objects.create(
-            user=request.user,
-            title=title,
-            description=description,
-            image=image
-        )
-        return redirect('feed')
-
-    return render(request, 'reviews/create_ticket.html')
+    template = 'reviews/create_ticket.html' if ticket is None else 'reviews/edit_ticket.html'
+    return render(request, template, {'form': form, 'ticket': ticket})
 
 
 @login_required
-def create_review(request, ticket_id=None):
+def manage_review(request, ticket_id=None, review_id=None):
     """
-    Handle the creation of a new review for a specific ticket.
+    Handle the creation and editing of a review.
     
     Args:
         request: The HTTP request object.
-        ticket_id: The ID of the ticket to review (optional).
+        ticket_id: Optional. The ID of the ticket for which the review is being created.
+        review_id: Optional. The ID of the review being edited (if applicable).
     
     Returns:
-        Redirect to feed on successful creation, or render create_review.html template.
+        Redirects to 'feed' on creation or 'user_posts' on edit, or renders the appropriate template.
     """
-    ticket = get_object_or_404(Ticket, id=ticket_id) 
+    if review_id:
+        review = get_object_or_404(Review, id=review_id)
+        if review.user != request.user:
+            return HttpResponseForbidden("Vous ne pouvez pas modifier cette critique.")
+        ticket = review.ticket 
+    else:
+        review = None
+        if ticket_id:
+            ticket = get_object_or_404(Ticket, id=ticket_id)
+            existing_review = Review.objects.filter(ticket=ticket, user=request.user).first()
+            if existing_review:
+                return HttpResponseForbidden("Vous avez déjà laissé une critique pour ce ticket. ")
+        else:
+            ticket = None
 
     if request.method == 'POST':
-        review_form = ReviewForm(request.POST) 
-
+        review_form = ReviewForm(request.POST, request.FILES, instance=review)
         if review_form.is_valid():
-            review = review_form.save(commit=False)
-            review.user = request.user  
-            review.ticket = ticket  
-            review.headline = review_form.cleaned_data['headline']
-            review.save() 
-
-            return redirect('feed')
+            new_review = review_form.save(commit=False)
+            new_review.user = request.user
+            if ticket:  
+                new_review.ticket = ticket
+            new_review.save()
+            if review: 
+                return redirect('user_posts')
+            else: 
+                return redirect('feed')
     else:
-        review_form = ReviewForm()  
+        review_form = ReviewForm(instance=review)
 
-    context = {
-        'ticket': ticket,
-        'review_form': review_form,  
-    }
-    
-    return render(request, 'reviews/create_review.html', context)
+    template = 'reviews/create_review.html' if review is None else 'reviews/edit_review.html'
+
+    return render(request, template, {'review_form': review_form, 'ticket': ticket, 'review': review})
 
 
 @login_required
@@ -158,63 +186,6 @@ def user_posts(request):
 
     return render(request, 'reviews/posts.html', {'posts': posts})
 
-
-@login_required
-def edit_ticket(request, ticket_id):
-    """
-    Handle the editing of an existing ticket.
-    
-    Args:
-        request: The HTTP request object.
-        ticket_id: The ID of the ticket to edit.
-    
-    Returns:
-        Redirect to user_posts on successful edit, or render edit_ticket.html template.
-    """
-    ticket = get_object_or_404(Ticket, id=ticket_id)
-
-    if ticket.user != request.user:
-        return HttpResponseForbidden("Vous ne pouvez pas modifier ce ticket.")
-
-    if request.method == 'POST':
-        form = TicketForm(request.POST, request.FILES, instance=ticket)
-        if form.is_valid():
-            form.save()
-            return redirect('user_posts')
-    else:
-        form = TicketForm(instance=ticket)
-
-    return render(request, 'reviews/edit_ticket.html', {'form': form, 'ticket': ticket})
-
-
-@login_required
-def edit_review(request, review_id):
-    """
-    Handle the editing of an existing review.
-    
-    Args:
-        request: The HTTP request object.
-        review_id: The ID of the review to edit.
-    
-    Returns:
-        Redirect to user_posts on successful edit, or render edit_review.html template.
-    """
-    review = get_object_or_404(Review, id=review_id)
-
-    if review.user != request.user:
-        return HttpResponseForbidden("Vous ne pouvez pas modifier cette critique.")
-
-    if request.method == 'POST':
-        form = ReviewForm(request.POST, instance=review)
-        if form.is_valid():
-            form.save()
-            return redirect('user_posts')
-    else:
-        form = ReviewForm(instance=review)
-
-    return render(request, 'reviews/edit_review.html', {'form': form, 'review': review})
-
-
 @login_required
 def delete_ticket(request, ticket_id):
     """
@@ -227,7 +198,7 @@ def delete_ticket(request, ticket_id):
     Returns:
         Redirect to user_posts on successful deletion, or render delete_ticket.html template.
     """
-    ticket = get_object_or_404(Ticket, id=ticket_id)
+    ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
 
     if request.method == 'POST':
         if request.POST.get('confirm') == 'yes':
