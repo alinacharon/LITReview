@@ -23,7 +23,7 @@
                                         {{ post.object.user.username }} a publié une critique
                                     {% endif %}
                                 </h5>
-                                <small class="text-muted">{{ post.object.created_at }}</small>
+                                <small class="text-white">{{ post.object.created_at|date:"H:i, d F Y" }}</small>
                             </div>
                             <p class="card-text">
                                 <strong class="review-headline">
@@ -61,7 +61,7 @@
                                         {{ post.object.user.username }} a demandé une critique
                                     {% endif %}
                                 </h5>
-                                <small class="{% if post.object.user != request.user %}text-white{% else %}text-muted{% endif %}">{{ post.object.created_at }}</small>
+                                <small class="text-white">{{ post.object.created_at|date:"H:i, d F Y" }}</small>
                             </div>
                             <p class="card-text">{{ post.object.title }}</p>
                             <p class="card-text">{{ post.object.description }}</p>
