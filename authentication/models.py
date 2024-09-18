@@ -3,10 +3,6 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """
-    Custom user model that extends Django's AbstractUser.
-    
-    """
     pass
 
 class UserFollows(models.Model):

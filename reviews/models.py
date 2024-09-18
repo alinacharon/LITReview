@@ -6,7 +6,7 @@ class Ticket(models.Model):
     """
     Represents a ticket in the review.
 
-    A ticket is a request for a review, typically for a book or article.
+    A ticket is a request for a review.
     """
 
     title = models.CharField(max_length=128)

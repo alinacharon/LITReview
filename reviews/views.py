@@ -22,8 +22,6 @@ def feed(request):
     reviews = Review.objects.filter(user__in=following_users)
     user_tickets = Ticket.objects.filter(user=request.user)
     user_reviews = Review.objects.filter(user=request.user)
-
-    # Получаем все тикеты, на которые пользователь уже оставил отзыв
     user_reviewed_tickets = Review.objects.filter(user=request.user).values_list('ticket', flat=True)
 
     posts = sorted(
@@ -98,7 +96,7 @@ def manage_review(request, ticket_id=None, review_id=None):
         review = None
         if ticket_id:
             ticket = get_object_or_404(Ticket, id=ticket_id)
-            existing_review = Review.objects.filter(ticket=ticket, user=request.user).first()
+            existing_review = Review.objects.filter(ticket=ticket, user=request.user).exists()
             if existing_review:
                 return HttpResponseForbidden("Vous avez déjà laissé une critique pour ce ticket. ")
         else:
