@@ -7,8 +7,10 @@ class BaseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            if isinstance(field.widget, (forms.TextInput, forms.Textarea)):
+            if isinstance(field.widget, (forms.TextInput, forms.Textarea, forms.Select, forms.FileInput)):
                 field.widget.attrs.update({'class': 'form-control'})
+            elif isinstance(field.widget, forms.RadioSelect):
+                field.widget.attrs.update({'class': 'form-check-input'})
 
 class ReviewForm(BaseForm):
     """For review creation and editing."""
@@ -16,7 +18,7 @@ class ReviewForm(BaseForm):
     RATING_CHOICES = [(i, str(i)) for i in range(6)]
     rating = forms.ChoiceField(
         choices=RATING_CHOICES,
-        widget=forms.RadioSelect(attrs={'class': 'form-check-input'}),
+        widget=forms.RadioSelect(),
         label='Note'
     )
 
