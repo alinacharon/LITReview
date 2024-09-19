@@ -84,8 +84,8 @@ def manage_follows(request):
         except IntegrityError:
             messages.warning(request, f"Vous suivez déjà {username}.")
 
-    following = UserFollows.objects.filter(user=request.user)
-    followers = UserFollows.objects.filter(followed_user=request.user)
+    following = request.user.following.all() # Remplaced of following = UserFollows.objects.following.all(user=request.user)
+    followers = request.user.followed_by.all()  # Remplaced of followers = UserFollows.objects.followers.all(followed_user=request.user)
 
     return render(request, 'authentication/manage_follows.html', {
         'following': following,

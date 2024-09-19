@@ -1,10 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from itertools import chain
+
 from django.contrib.auth.decorators import login_required
-from .models import Ticket, Review
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404, redirect
+
 from authentication.models import UserFollows
 from .forms import ReviewForm, TicketForm
-from itertools import chain
-from django.http import HttpResponseForbidden
+from .models import Ticket, Review
+
 
 @login_required
 def feed(request):
@@ -25,15 +28,18 @@ def feed(request):
     user_reviewed_tickets = Review.objects.filter(user=request.user).values_list('ticket', flat=True)
 
     posts = sorted(
-        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in tickets] +
+        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
+         tickets] +
         [{'type': 'review', 'object': review} for review in reviews] +
-        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in user_tickets] +
+        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
+         user_tickets] +
         [{'type': 'review', 'object': review} for review in user_reviews],
         key=lambda x: x['object'].created_at,
         reverse=True
     )
 
     return render(request, 'reviews/feed.html', {'posts': posts})
+
 
 @login_required
 def manage_ticket(request, ticket_id=None):
@@ -60,13 +66,13 @@ def manage_ticket(request, ticket_id=None):
         form = TicketForm(request.POST, request.FILES, instance=ticket)
         if form.is_valid():
             new_ticket = form.save(commit=False)
-            if ticket is None:  
+            if ticket is None:
                 new_ticket.user = request.user
             new_ticket.save()
             if ticket is None:
-                return redirect('feed') 
+                return redirect('feed')
             else:
-                return redirect('user_posts') 
+                return redirect('user_posts')
     else:
         form = TicketForm(instance=ticket)
 
@@ -91,7 +97,7 @@ def manage_review(request, ticket_id=None, review_id=None):
         review = get_object_or_404(Review, id=review_id)
         if review.user != request.user:
             return HttpResponseForbidden("Vous ne pouvez pas modifier cette critique.")
-        ticket = review.ticket 
+        ticket = review.ticket
     else:
         review = None
         if ticket_id:
@@ -107,12 +113,12 @@ def manage_review(request, ticket_id=None, review_id=None):
         if review_form.is_valid():
             new_review = review_form.save(commit=False)
             new_review.user = request.user
-            if ticket:  
+            if ticket:
                 new_review.ticket = ticket
             new_review.save()
-            if review: 
+            if review:
                 return redirect('user_posts')
-            else: 
+            else:
                 return redirect('feed')
     else:
         review_form = ReviewForm(instance=review)
@@ -140,22 +146,23 @@ def create_review_without_ticket(request):
             ticket = ticket_form.save(commit=False)
             ticket.user = request.user
             ticket.save()
-            
+
             review = review_form.save(commit=False)
             review.user = request.user
             review.ticket = ticket
             review.save()
-            
+
             return redirect('feed')
     else:
         ticket_form = TicketForm()
         review_form = ReviewForm()
-    
+
     context = {
         'ticket_form': ticket_form,
         'review_form': review_form,
     }
     return render(request, 'reviews/create_review_without_ticket.html', context)
+
 
 @login_required
 def user_posts(request):
@@ -169,7 +176,7 @@ def user_posts(request):
         Rendered posts.html template with user's posts.
     """
     user = request.user
-    
+
     tickets = Ticket.objects.filter(user=user).order_by('-created_at')
     reviews = Review.objects.filter(user=user).order_by('-created_at')
 
@@ -183,6 +190,7 @@ def user_posts(request):
     )
 
     return render(request, 'reviews/posts.html', {'posts': posts})
+
 
 @login_required
 def delete_ticket(request, ticket_id):
@@ -204,7 +212,7 @@ def delete_ticket(request, ticket_id):
             return redirect('user_posts')
         else:
             return redirect('user_posts')
-    
+
     return render(request, 'reviews/delete_ticket.html', {'ticket': ticket})
 
 
@@ -230,5 +238,3 @@ def delete_review(request, review_id):
             return redirect('user_posts')
 
     return render(request, 'reviews/delete_review.html', {'review': review})
-
-
