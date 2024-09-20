@@ -25,9 +25,14 @@ LITReview is a Django-based web application that allows users to request and pub
    ```
 
 2. Create a virtual environment:
-   ```
-   python -m venv venv
-   ```
+   - On Windows and Linux:
+     ```
+     python -m venv venv
+     ```
+   - On macOS
+     ```
+     python3 -m venv venv
+     ```
 
 3. Activate the virtual environment:
    - On Windows:
