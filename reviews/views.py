@@ -1,12 +1,10 @@
 from itertools import chain
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
-
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
-
+from django.contrib.auth.decorators import login_required
+from .models import Review, Ticket
 from authentication.models import UserFollows
 from .forms import ReviewForm, TicketForm
-from .models import Ticket, Review
 
 
 @login_required
@@ -29,9 +27,11 @@ def feed(request):
 
     posts = sorted(
         chain(
-            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in tickets),
+            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
+             tickets),
             ({'type': 'review', 'object': review} for review in reviews),
-            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in user_tickets),
+            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
+             user_tickets),
             ({'type': 'review', 'object': review} for review in user_reviews)
         ),
         key=lambda x: x['object'].created_at,
@@ -76,7 +76,7 @@ def manage_ticket(request, ticket_id=None):
     else:
         form = TicketForm(instance=ticket)
 
-    template = 'reviews/manage_ticket.html' 
+    template = 'reviews/manage_ticket.html'
     return render(request, template, {'form': form, 'ticket': ticket})
 
 
@@ -191,10 +191,6 @@ def user_posts(request):
 
     return render(request, 'reviews/posts.html', {'posts': posts})
 
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import Review, Ticket
 
 @login_required
 def delete_post(request, post_type, post_id):
