@@ -2,7 +2,6 @@ from itertools import chain
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 
 from authentication.models import UserFollows
@@ -200,15 +199,15 @@ from .models import Review, Ticket
 @login_required
 def delete_post(request, post_type, post_id):
     """
-    Gère la suppression d'un post (critique ou ticket).
+    Handles the deletion of a post (review or ticket).
 
     Args:
-    - request: L'objet HttpRequest
-    - post_type: Une chaîne 'review' ou 'ticket' indiquant le type de post à supprimer
-    - post_id: L'ID du post à supprimer
+    - request: The HttpRequest object
+    - post_type: A string 'review' or 'ticket' indicating the type of post to delete
+    - post_id: The ID of the post to delete
 
     Returns:
-    - HttpResponse: Redirige vers 'user_posts' après suppression ou affiche la page de confirmation
+    - HttpResponse: Redirects to 'user_posts' after deletion or displays the confirmation page
     """
     if post_type == 'review':
         post = get_object_or_404(Review, id=post_id, user=request.user)
