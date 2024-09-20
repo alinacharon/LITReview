@@ -4,22 +4,27 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="text-center">Connexion</h2>
-    <form method="post">
+    <h1 class="text-center">Connexion</h1>
+    <form method="post" aria-label="Formulaire de connexion">
         {% csrf_token %}
         <div class="mb-3">
             <label for="username" class="form-label">Nom d'utilisateur</label>
-            <input type="text" class="form-control" id="username" name="username" required>
+            <input type="text" class="form-control" id="username" name="username" required aria-required="true">
         </div>
         <div class="mb-3">
             <label for="password" class="form-label">Mot de passe</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+            <input type="password" class="form-control" id="password" name="password" required aria-required="true">
         </div>
         <div class="mb-3">
-            <a href="{% url 'home' %}" class="btn btn-custom">Retour</a>
-            <button type="submit" class="btn btn-custom">Connexion</button>
+            <a href="{% url 'home' %}" class="btn btn-custom" role="button" aria-label="Retour à la page d'accueil">
+                Retour
+                <span class="visually-hidden">Cliquez ici pour revenir à la page d'accueil</span>
+            </a>
+            <button type="submit" class="btn btn-custom" aria-label="Se connecter à votre compte">
+                Connexion
+                <span class="visually-hidden">Cliquez ici pour vous connecter à votre compte</span>
+            </button>
         </div>
-        
     </form>
 </div>
 {% endblock %}

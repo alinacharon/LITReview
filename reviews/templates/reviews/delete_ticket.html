@@ -6,14 +6,20 @@
 <div class="container mt-5">
     <div class="card bg-dark text-white">
         <div class="card-body">
-            <h5 class="card-title">Êtes-vous sûr de vouloir supprimer ce ticket ?</h5>
-            <p class="card-text">Cette action est irréversible.</p>
+            <h1 class="card-title">Supprimer le ticket</h1>
+            <p class="card-text" role="alert">Êtes-vous sûr de vouloir supprimer ce ticket ? Cette action est irréversible.</p>
             
-            <form method="POST">
+            <form method="POST" aria-label="Formulaire de confirmation de suppression de ticket">
                 {% csrf_token %}
                 <div class="text-center">
-                    <button type="submit" name="confirm" value="yes" class="btn btn-danger me-3">Oui</button>
-                    <button type="submit" name="confirm" value="no" class="btn btn-secondary">Non</button>
+                    <button type="submit" name="confirm" value="yes" class="btn btn-danger me-3" aria-label="Confirmer la suppression du ticket">
+                        Oui
+                        <span class="visually-hidden">Cliquez ici pour confirmer la suppression de votre ticket</span>
+                    </button>
+                    <button type="submit" name="confirm" value="no" class="btn btn-secondary" aria-label="Annuler la suppression du ticket">
+                        Non
+                        <span class="visually-hidden">Cliquez ici pour annuler la suppression et conserver votre ticket</span>
+                    </button>
                 </div>
             </form>
         </div>

@@ -5,30 +5,32 @@
 {% block content %}
 <h1 class="mb-4">Créer une critique</h1>
 
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" aria-label="Formulaire de création de critique sans ticket">
     {% csrf_token %}
     <h2>Livre / Article</h2>
     <div class="mb-3">
         <label for="title" class="form-label">Titre</label>
-        <input type="text" class="form-control" id="title" name="title" required>
+        <input type="text" class="form-control" id="title" name="title" required aria-required="true">
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+        <textarea class="form-control" id="description" name="description" rows="4" aria-describedby="descriptionHelp"></textarea>
+        <div id="descriptionHelp" class="form-text">Décrivez brièvement le livre ou l'article.</div>
     </div>
     <div class="mb-3">
         <label for="image" class="form-label">Image</label>
-        <input type="file" class="form-control" id="image" name="image">
+        <input type="file" class="form-control" id="image" name="image" accept="image/*" aria-describedby="imageHelp">
+        <div id="imageHelp" class="form-text">Téléchargez une image de couverture (optionnel).</div>
     </div>
 
     <h2>Critique</h2>
     <div class="mb-3">
-        <label for="headline" class="form-label">Titre</label>
-        <input type="text" class="form-control" id="headline" name="headline" required>
+        <label for="headline" class="form-label">Titre de la critique</label>
+        <input type="text" class="form-control" id="headline" name="headline" required aria-required="true">
     </div>
     <div class="mb-3">
         <label for="id_rating" class="form-label">{{ review_form.rating.label }}</label>
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between" role="group" aria-label="Options de notation">
             {% for radio in review_form.rating %}
                 <div class="form-check">
                     {{ radio.tag }}
@@ -41,13 +43,19 @@
     </div>
     <div class="mb-3">
         <label for="comment" class="form-label">Commentaire</label>
-        <textarea class="form-control" id="comment" name="comment" rows="4" required></textarea>
+        <textarea class="form-control" id="comment" name="comment" rows="4" required aria-required="true"></textarea>
     </div>
     <div class="mb-3">
         {% if previous_url %}
-            <a href="{{ previous_url }}" class="btn btn-custom me-2">Retour</a>
+            <a href="{{ previous_url }}" class="btn btn-custom me-2" role="button" aria-label="Retour à la page précédente">
+                Retour
+                <span class="visually-hidden">Cliquez ici pour revenir à la page précédente sans enregistrer la critique</span>
+            </a>
         {% endif %}
-        <button type="submit" class="btn btn-custom">Publier</button>
+        <button type="submit" class="btn btn-custom" aria-label="Publier la critique">
+            Publier
+            <span class="visually-hidden">Cliquez ici pour publier votre critique</span>
+        </button>
     </div>
 </form>
 

@@ -3,71 +3,76 @@
 {% block title %}Vos Posts{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1 class="text-center my-4">Vos Posts</h1>
-
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Vos Posts</h2>
     <div class="row">
         <div class="col-md-8 offset-md-2">
             {% if posts %}
+                <ul class="list-unstyled">
                 {% for post in posts %}
-                    {% if post.type == 'review' %}
-                        <div class="card bg-dark text-white mb-4">
+                    <li class="mb-4">
+                        <div class="card bg-dark text-white">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">Vous avez publié une critique</h5>
-                                    <small class="text-white">{{ post.object.created_at|date:"H:i, d M Y" }}</small>
+                                    <h5 class="card-title">
+                                        {% if post.type == 'review' %}
+                                            Vous avez publié une critique
+                                        {% elif post.type == 'ticket' %}
+                                            Vous avez publié un ticket
+                                        {% endif %}
+                                    </h5>
+                                    <time datetime="{{ post.object.created_at|date:'Y-m-d H:i' }}">
+                                        {{ post.object.created_at|date:"H:i, d M Y" }}
+                                    </time>
                                 </div>
-                                <p class="card-text">
-                                    <strong class="review-headline">
-                                        <span class="headline-text">{{ post.object.headline }}</span>
-                                        <span class="rating-stars">
-                                            {% for i in "12345" %}
-                                                {% if i|slice:":1" <= post.object.rating|stringformat:"i" %}
-                                                    ★
-                                                {% else %}
-                                                    ☆
-                                                {% endif %}
-                                            {% endfor %}
-                                        </span>
-                                    </strong>
-                                </p>
-                                <p class="card-text">{{ post.object.comment }}</p>
-                                <div class="border p-3 mb-2">
-                                    <p class="mb-1"><strong>Ticket - {{ post.object.ticket.user.username }}</strong></p>
-                                    <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
+                                
+                                {% if post.type == 'review' %}
+                                    <p class="card-text">
+                                        <strong>
+                                            {{ post.object.headline }}
+                                            <span class="rating-stars" aria-label="Note: {{ post.object.rating }} sur 5">
+                                                {% for i in "12345" %}
+                                                    {% if i|slice:":1" <= post.object.rating|stringformat:"i" %}
+                                                        ★
+                                                    {% else %}
+                                                        ☆
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </span>
+                                        </strong>
+                                    </p>
+                                    <p class="card-text">{{ post.object.comment }}</p>
+                                    <div class="border p-3 mb-2">
+                                        <p class="mb-1"><strong>Ticket - {{ post.object.ticket.user.username }}</strong></p>
+                                        <p class="mb-0"><em>{{ post.object.ticket.title }}</em></p>
 
-                                    {% if post.object.ticket.image %}
-                                        <img src="{{ post.object.ticket.image.url }}" alt="{{ post.object.ticket.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                                        {% if post.object.ticket.image %}
+                                            <img src="{{ post.object.ticket.image.url }}" alt="Image pour {{ post.object.ticket.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+                                        {% endif %}
+                                    </div>
+                                {% elif post.type == 'ticket' %}
+                                    <p class="card-text">{{ post.object.title }}</p>
+                                    <p class="card-text">{{ post.object.description }}</p>
+                                    {% if post.object.image %}
+                                        <img src="{{ post.object.image.url }}" alt="Image pour {{ post.object.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
                                     {% endif %}
-                                </div>
-                            </div>
-                            <div class="card-footer text-end">
-                                <a href="{% url 'edit_review' post.object.id %}" class="btn btn-outline-secondary me-2">Modifier</a>
-                                <a href="{% url 'delete_review' post.object.id %}" class="btn btn-outline-danger">Supprimer</a>
-                            </div>
-                        </div>
-                    {% elif post.type == 'ticket' %}
-                        <div class="card bg-dark text-white mb-4">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <h5 class="card-title">Vous avez publié un ticket</h5>
-                                    <small class="text-white">{{ post.object.created_at|date:"H:i, d M Y" }}</small>
-                                </div>
-                                <p class="card-text">{{ post.object.title }}</p>
-                                <p class="card-text">{{ post.object.description }}</p>
-                                {% if post.object.image %}
-                                    <img src="{{ post.object.image.url }}" alt="{{ post.object.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
                                 {% endif %}
                             </div>
                             <div class="card-footer text-end">
-                                <a href="{% url 'edit_ticket' post.object.id %}" class="btn btn-outline-secondary me-2">Modifier</a>
-                                <a href="{% url 'delete_ticket' post.object.id %}" class="btn btn-outline-danger">Supprimer</a>
+                                {% if post.type == 'review' %}
+                                    <a href="{% url 'edit_review' post.object.id %}" class="btn btn-outline-secondary me-2" aria-label="Modifier la critique">Modifier</a>
+                                    <a href="{% url 'delete_review' post.object.id %}" class="btn btn-outline-danger" aria-label="Supprimer la critique">Supprimer</a>
+                                {% elif post.type == 'ticket' %}
+                                    <a href="{% url 'edit_ticket' post.object.id %}" class="btn btn-outline-secondary me-2" aria-label="Modifier le ticket">Modifier</a>
+                                    <a href="{% url 'delete_ticket' post.object.id %}" class="btn btn-outline-danger" aria-label="Supprimer le ticket">Supprimer</a>
+                                {% endif %}
                             </div>
                         </div>
-                    {% endif %}
+                    </li>
                 {% endfor %}
+                </ul>
             {% else %}
-                <p class="text-center">Vous n'avez publié aucun post.</p>
+                <p class="text-center" role="alert">Vous n'avez publié aucun post.</p>
             {% endif %}
         </div>
     </div>

@@ -3,57 +3,64 @@
 {% block title %}Modifier votre critique{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-8">
     <h2 class="text-center mb-4">Modifier votre critique</h2>
     
-    <div class="card bg-dark text-white mb-4">
-        <div class="card-body">
-            <h5 class="card-title">Vous êtes en train de poster en réponse à</h5>
-            <div class="border p-3 mb-2">
-                <p><strong>{{ review.ticket.user.username }}</strong> a demandé une critique</p>
-                <p>{{ review.ticket.title }}</p>
-                <p>{{ review.ticket.description }}</p>
-                {% if review.ticket.image %}
-                    <div class="mt-2 mb-2 text-center">
-                        <img src="{{ review.ticket.image.url }}" alt="{{ review.ticket.title }}" class="img-thumbnail" style="max-width: 150px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!--Ticket--> 
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Vous êtes en train de poster en réponse à</h5>
+                    <div class="border p-3 mb-2">
+                        <p><strong>{{ review.ticket.user.username }}</strong> a demandé une critique</p>
+                        <p>{{ review.ticket.title }}</p>
+                        <p>{{ review.ticket.description }}</p>
+                        {% if review.ticket.image %}
+                            <div class="mt-2 mb-2 text-center">
+                                <img src="{{ review.ticket.image.url }}" alt="Image pour {{ review.ticket.title }}" class="img-thumbnail" style="max-width: 150px;">
+                            </div>
+                        {% endif %}
+                        <small>{{ review.ticket.created_at|date:"H:i, d M Y" }}</small>
                     </div>
-                {% endif %}
-                <small class="text-white">{{ review.ticket.created_at|date:"H:i, d M Y" }}</small>
+                </div>
             </div>
+
+            <!--Critique-->
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="headline" class="form-label">Titre de la critique</label>
+                    <input type="text" class="form-control" id="headline" name="headline" value="{{ review.headline }}" required aria-required="true" aria-describedby="headlineHelp">
+                    <div id="headlineHelp" class="form-text">Entrez le titre de votre critique</div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_rating" class="form-label">{{ review_form.rating.label }}</label>
+                    <div class="d-flex justify-content-between" role="group" aria-label="Options de notation" aria-describedby="ratingHelp">
+                        {% for radio in review_form.rating %}
+                            <div class="form-check">
+                                {{ radio.tag }}
+                                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                                    {{ radio.choice_label }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div id="ratingHelp" class="form-text">Choisissez une note pour votre critique</div>
+                </div>
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Commentaire</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="4" required aria-required="true" aria-describedby="commentHelp">{{ review.comment }}</textarea>
+                    <div id="commentHelp" class="form-text">Écrivez votre critique détaillée</div>
+                </div>
+                <div class="d-flex justify-content-end mt-4">
+                    {% if previous_url %}
+                        <a href="{{ previous_url }}" class="btn btn-custom me-2" role="button" aria-label="Retourner à la page précédente">Retour</a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-custom" aria-label="Envoyer le formulaire de modification de la critique">Envoyer</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="mb-4">
-            <label for="id_headline" class="form-label">Titre</label>
-            <input type="text" name="headline" class="form-control bg-dark text-white" id="id_headline" value="{{ form.headline.value }}">
-        </div>
-        
-        <div class="mb-4">
-            <label class="form-label">Note</label>
-            <div>
-                {% for i in "012345" %}
-                    <label class="me-2 text-white">
-                        <input type="radio" name="rating" value="{{ i }}" {% if form.rating.value|stringformat:"i" == i %}checked{% endif %}> 
-                        - {{ i }}
-                    </label>
-                {% endfor %}
-            </div>
-        </div>
-
-        <div class="mb-4">
-            <label for="id_comment" class="form-label">Commentaire</label>
-            <textarea name="comment" class="form-control bg-dark text-white" id="id_comment" rows="4">{{ form.comment.value }}</textarea>
-        </div>
-
-        <div class="d-flex justify-content-end mt-4">
-            {% if previous_url %}
-            <a href="{{ previous_url }}" class="btn btn-custom me-2">Retour</a>
-        {% endif %}
-            <button type="submit" class="btn btn-custom">Envoyer</button>
-        </div>
-    </form>
 </div>
 {% endblock %}

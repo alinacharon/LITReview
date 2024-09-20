@@ -6,14 +6,20 @@
 <div class="main-container mt-5">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Êtes-vous sûr de vouloir supprimer cette critique ?</h5>
-            <p class="card-text">Cette action est irréversible.</p>
+            <h1 class="card-title">Supprimer la critique</h1>
+            <p class="card-text" role="alert">Êtes-vous sûr de vouloir supprimer cette critique ? Cette action est irréversible.</p>
             
-            <form method="POST">
+            <form method="POST" aria-label="Formulaire de confirmation de suppression de critique">
                 {% csrf_token %}
                 <div class="text-center">
-                    <button type="submit" name="confirm" value="yes" class="btn btn-danger me-3">Oui</button>
-                    <button type="submit" name="confirm" value="no" class="btn btn-secondary">Non</button>
+                    <button type="submit" name="confirm" value="yes" class="btn btn-danger me-3" aria-label="Confirmer la suppression de la critique">
+                        Oui
+                        <span class="visually-hidden">Cliquez ici pour confirmer la suppression de votre critique</span>
+                    </button>
+                    <button type="submit" name="confirm" value="no" class="btn btn-secondary" aria-label="Annuler la suppression de la critique">
+                        Non
+                        <span class="visually-hidden">Cliquez ici pour annuler la suppression et conserver votre critique</span>
+                    </button>
                 </div>
             </form>
         </div>
