@@ -28,12 +28,12 @@ def feed(request):
     user_reviewed_tickets = Review.objects.filter(user=request.user).values_list('ticket', flat=True)
 
     posts = sorted(
-        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
-         tickets] +
-        [{'type': 'review', 'object': review} for review in reviews] +
-        [{'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
-         user_tickets] +
-        [{'type': 'review', 'object': review} for review in user_reviews],
+        chain(
+            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in tickets),
+            ({'type': 'review', 'object': review} for review in reviews),
+            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in user_tickets),
+            ({'type': 'review', 'object': review} for review in user_reviews)
+        ),
         key=lambda x: x['object'].created_at,
         reverse=True
     )
@@ -76,7 +76,7 @@ def manage_ticket(request, ticket_id=None):
     else:
         form = TicketForm(instance=ticket)
 
-    template = 'reviews/create_ticket.html' if ticket is None else 'reviews/edit_ticket.html'
+    template = 'reviews/manage_ticket.html' 
     return render(request, template, {'form': form, 'ticket': ticket})
 
 
@@ -123,7 +123,7 @@ def manage_review(request, ticket_id=None, review_id=None):
     else:
         review_form = ReviewForm(instance=review)
 
-    template = 'reviews/create_review.html' if review is None else 'reviews/edit_review.html'
+    template = 'reviews/manage_review.html'
 
     return render(request, template, {'review_form': review_form, 'ticket': ticket, 'review': review})
 

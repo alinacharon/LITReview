@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if ticket %}Modifier{% else %}Créer{% endif %} un Ticket{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">{% if ticket %}Modifier{% else %}Créer{% endif %} un Ticket</h2>
+
+    <form method="post" enctype="multipart/form-data" aria-label="Formulaire de {% if ticket %}modification{% else %}création{% endif %} de ticket">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="id_title" class="form-label">Titre</label>
+            <input type="text" name="title" class="form-control" id="id_title" value="{{ form.title.value|default_if_none:'' }}" required aria-required="true" aria-describedby="titleHelp">
+            <div id="titleHelp" class="form-text">Entrez le titre de votre ticket</div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="id_description" class="form-label">Description</label>
+            <textarea name="description" class="form-control" id="id_description" rows="4" required aria-required="true" aria-describedby="descriptionHelp">{{ form.description.value|default_if_none:'' }}</textarea>
+            <div id="descriptionHelp" class="form-text">Décrivez le livre ou l'article pour lequel vous demandez une critique.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_image" class="form-label">Image</label>
+            {% if ticket and ticket.image %}
+                <div class="mt-2 mb-2">
+                    <img src="{{ ticket.image.url }}" alt="Image actuelle du ticket" class="img-thumbnail" style="max-width: 150px;">
+                </div>
+            {% endif %}
+            <input type="file" name="image" class="form-control" id="id_image" accept="image/*" aria-describedby="imageHelp">
+            <div id="imageHelp" class="form-text">Téléchargez une image de couverture (optionnel).</div>
+        </div>
+
+        <div class="mb-3">
+            {% if previous_url %}
+            <a href="{{ previous_url }}" class="btn btn-custom me-2" role="button" aria-label="Retour à la page précédente">
+                Retour
+                <span class="visually-hidden">Cliquez ici pour revenir à la page précédente sans {% if ticket %}modifier{% else %}créer{% endif %} le ticket</span>
+            </a>
+            {% endif %}
+            <button type="submit" class="btn btn-custom" aria-label="{% if ticket %}Modifier{% else %}Créer{% endif %} le ticket">
+                {% if ticket %}Modifier{% else %}Créer{% endif %} le Ticket
+                <span class="visually-hidden">Cliquez ici pour {% if ticket %}modifier{% else %}créer et publier{% endif %} votre ticket</span>
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
