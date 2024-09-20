@@ -1,4 +1,5 @@
 from itertools import chain
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
@@ -192,49 +193,37 @@ def user_posts(request):
     return render(request, 'reviews/posts.html', {'posts': posts})
 
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from .models import Review, Ticket
+
 @login_required
-def delete_ticket(request, ticket_id):
+def delete_post(request, post_type, post_id):
     """
-    Handle the deletion of an existing ticket.
-    
+    Gère la suppression d'un post (critique ou ticket).
+
     Args:
-        request: The HTTP request object.
-        ticket_id: The ID of the ticket to delete.
-    
+    - request: L'objet HttpRequest
+    - post_type: Une chaîne 'review' ou 'ticket' indiquant le type de post à supprimer
+    - post_id: L'ID du post à supprimer
+
     Returns:
-        Redirect to user_posts on successful deletion, or render delete_ticket.html template.
+    - HttpResponse: Redirige vers 'user_posts' après suppression ou affiche la page de confirmation
     """
-    ticket = get_object_or_404(Ticket, id=ticket_id, user=request.user)
+    if post_type == 'review':
+        post = get_object_or_404(Review, id=post_id, user=request.user)
+    elif post_type == 'ticket':
+        post = get_object_or_404(Ticket, id=post_id, user=request.user)
+    else:
+        return HttpResponseBadRequest("Type de post invalide")
 
     if request.method == 'POST':
         if request.POST.get('confirm') == 'yes':
-            ticket.delete()
-            return redirect('user_posts')
-        else:
-            return redirect('user_posts')
+            post.delete()
+        return redirect('user_posts')
 
-    return render(request, 'reviews/delete_ticket.html', {'ticket': ticket})
-
-
-@login_required
-def delete_review(request, review_id):
-    """
-    Handle the deletion of an existing review.
-    
-    Args:
-        request: The HTTP request object.
-        review_id: The ID of the review to delete.
-    
-    Returns:
-        Redirect to user_posts on successful deletion, or render delete_review.html template.
-    """
-    review = get_object_or_404(Review, id=review_id, user=request.user)
-
-    if request.method == 'POST':
-        if request.POST.get('confirm') == 'yes':
-            review.delete()
-            return redirect('user_posts')
-        else:
-            return redirect('user_posts')
-
-    return render(request, 'reviews/delete_review.html', {'review': review})
+    context = {
+        'post_type': post_type,
+        'post': post
+    }
+    return render(request, 'reviews/delete_post.html', context)

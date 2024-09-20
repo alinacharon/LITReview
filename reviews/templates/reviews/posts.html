@@ -61,10 +61,10 @@
                             <div class="card-footer text-end">
                                 {% if post.type == 'review' %}
                                     <a href="{% url 'edit_review' post.object.id %}" class="btn btn-outline-secondary me-2" aria-label="Modifier la critique">Modifier</a>
-                                    <a href="{% url 'delete_review' post.object.id %}" class="btn btn-outline-danger" aria-label="Supprimer la critique">Supprimer</a>
+                                    <a href="{% url 'delete_post' 'review' post.object.id %}" class="btn btn-outline-danger" aria-label="Supprimer la critique">Supprimer</a>
                                 {% elif post.type == 'ticket' %}
                                     <a href="{% url 'edit_ticket' post.object.id %}" class="btn btn-outline-secondary me-2" aria-label="Modifier le ticket">Modifier</a>
-                                    <a href="{% url 'delete_ticket' post.object.id %}" class="btn btn-outline-danger" aria-label="Supprimer le ticket">Supprimer</a>
+                                    <a href="{% url 'delete_post' 'ticket' post.object.id %}" class="btn btn-outline-danger" aria-label="Supprimer le ticket">Supprimer</a>
                                 {% endif %}
                             </div>
                         </div>

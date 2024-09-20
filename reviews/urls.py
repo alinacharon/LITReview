@@ -9,7 +9,6 @@ urlpatterns = [
     path('create-review-without-ticket/', views.create_review_without_ticket, name='create_review_without_ticket'),
     path('', views.feed, name='feed'),
     path('posts/', views.user_posts, name='user_posts'),  
-    path('delete-ticket/<int:ticket_id>/', views.delete_ticket, name='delete_ticket'),   
-    path('delete-review/<int:review_id>/', views.delete_review, name='delete_review'), 
+    path('delete/<str:post_type>/<int:post_id>/', views.delete_post, name='delete_post'),
 ]
 
