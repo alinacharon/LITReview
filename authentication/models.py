@@ -5,6 +5,7 @@ from django.db import models
 class User(AbstractUser):
     pass
 
+
 class UserFollows(models.Model):
     """
     Represents a following relationship between users.

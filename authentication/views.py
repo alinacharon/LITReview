@@ -1,11 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
+from django.shortcuts import render, redirect, get_object_or_404
+
 from . import forms
 from .models import User, UserFollows
-from django.db import IntegrityError
-from django.contrib import messages
 
 
 def home_page(request):
@@ -84,8 +85,8 @@ def manage_follows(request):
         except IntegrityError:
             messages.warning(request, f"Vous suivez déjà {username}.")
 
-    following = request.user.following.all() # Remplaced of following = UserFollows.objects.following.all(user=request.user)
-    followers = request.user.followed_by.all()  # Remplaced of followers = UserFollows.objects.followers.all(followed_user=request.user)
+    following = request.user.following.all()
+    followers = request.user.followed_by.all()
 
     return render(request, 'authentication/manage_follows.html', {
         'following': following,

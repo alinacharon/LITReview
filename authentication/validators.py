@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 
+
 class ContainsLetterValidator:
     """
     Validator to check if the password contains at least one letter.
@@ -28,6 +29,7 @@ class ContainsLetterValidator:
             str: The help text.
         """
         return 'Votre mot de passe doit contenir au moins une lettre majuscule ou minuscule.'
+
 
 class ContainsNumberValidator:
     """

@@ -5,6 +5,7 @@ Context processors are functions that add variables to the context of every requ
 making these variables available in all templates.
 """
 
+
 def previous_url(request):
     """
     Adds the previous URL to the request context.

@@ -1,9 +1,11 @@
 from django import forms
+
 from .models import Review, Ticket
+
 
 class BaseForm(forms.ModelForm):
     """Base form for all forms."""
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
@@ -11,6 +13,7 @@ class BaseForm(forms.ModelForm):
                 field.widget.attrs.update({'class': 'form-control'})
             elif isinstance(field.widget, forms.RadioSelect):
                 field.widget.attrs.update({'class': 'form-check-input'})
+
 
 class ReviewForm(BaseForm):
     """For review creation and editing."""
@@ -33,6 +36,7 @@ class ReviewForm(BaseForm):
             'headline': forms.TextInput(attrs={'placeholder': 'Titre de la critique'}),
             'comment': forms.Textarea(attrs={'placeholder': 'Commentaire', 'rows': 5})
         }
+
 
 class TicketForm(BaseForm):
     """For ticket creation and editing."""

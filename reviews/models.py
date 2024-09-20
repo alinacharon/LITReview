@@ -1,5 +1,5 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 
 class Ticket(models.Model):
@@ -27,7 +27,7 @@ class Review(models.Model):
     """
 
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='reviews')
-    headline = models.CharField(max_length=128) 
+    headline = models.CharField(max_length=128)
     rating = models.PositiveSmallIntegerField()
     comment = models.TextField(max_length=8192, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='reviews')
@@ -35,4 +35,3 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.headline} - {self.rating}/5"
-
