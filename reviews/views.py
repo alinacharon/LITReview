@@ -10,13 +10,15 @@ from .forms import ReviewForm, TicketForm
 @login_required
 def feed(request):
     """
-    Display a feed of posts from users followed by the current user and reviews on the user's tickets.
+    Display a feed of posts from users followed by the current user, reviews on the user's tickets,
+    and reviews on the user's tickets by other users not followed by the current user.
     
     Args:
         request: The HTTP request object.
     
     Returns:
-        Rendered follows_feed.html template with sorted posts from followed users and reviews on user's tickets.
+        Rendered follows_feed.html template with sorted posts from followed users, user's own posts,
+        and reviews on user's tickets by other users.
     """
     following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
     tickets = Ticket.objects.filter(user__in=following_users)
@@ -24,6 +26,7 @@ def feed(request):
     user_tickets = Ticket.objects.filter(user=request.user)
     user_reviews = Review.objects.filter(user=request.user)
     user_reviewed_tickets = Review.objects.filter(user=request.user).values_list('ticket', flat=True)
+    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
 
     posts = sorted(
         chain(
@@ -32,7 +35,8 @@ def feed(request):
             ({'type': 'review', 'object': review} for review in reviews),
             ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
              user_tickets),
-            ({'type': 'review', 'object': review} for review in user_reviews)
+            ({'type': 'review', 'object': review} for review in user_reviews),
+            ({'type': 'review', 'object': review} for review in reviews_on_user_tickets)
         ),
         key=lambda x: x['object'].created_at,
         reverse=True
@@ -177,8 +181,8 @@ def user_posts(request):
     """
     user = request.user
 
-    tickets = Ticket.objects.filter(user=user).order_by('-created_at')
-    reviews = Review.objects.filter(user=user).order_by('-created_at')
+    tickets = Ticket.objects.filter(user=user)
+    reviews = Review.objects.filter(user=user)
 
     posts = sorted(
         chain(

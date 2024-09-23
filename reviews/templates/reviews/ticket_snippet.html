@@ -1,0 +1,25 @@
+<div class="card {% if post.object.user == request.user %}{% else %}bg-dark text-white{% endif %}">
+    <div class="card-body">
+        <div class="d-flex justify-content-between">
+            <h5 class="card-title">
+                {% if post.object.user == request.user %}
+                    Vous avez demandé une critique
+                {% else %}
+                    {{ post.object.user.username }} a demandé une critique
+                {% endif %}
+            </h5>
+            <small class="text-white">{{ post.object.created_at|date:"H:i, d F Y" }}</small>
+        </div>
+        <p class="card-text">{{ post.object.title }}</p>
+        <p class="card-text">{{ post.object.description }}</p>
+        {% if post.object.image %}
+            <img src="{{ post.object.image.url }}" alt="{{ post.object.title }}" class="img-thumbnail mt-2 mb-2" style="max-width: 150px;">
+        {% endif %}
+        
+        {% if post.object.user != request.user and not post.user_has_reviewed %}
+            <div class="text-end">
+                <a href="{% url 'create_review' post.object.id %}" class="btn btn-custom" aria-label="Сréation de critique">Créer une critique</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
