@@ -20,21 +20,19 @@ def feed(request):
         Rendered follows_feed.html template with sorted posts from followed users, user's own posts,
         and reviews on user's tickets by other users.
     """
-    following_users = UserFollows.objects.filter(user=request.user).values_list('followed_user', flat=True)
+    following_users = request.user.following.values_list('followed_user', flat=True)
     tickets = Ticket.objects.filter(user__in=following_users)
     reviews = Review.objects.filter(user__in=following_users)
-    user_tickets = Ticket.objects.filter(user=request.user)
-    user_reviews = Review.objects.filter(user=request.user)
-    user_reviewed_tickets = Review.objects.filter(user=request.user).values_list('ticket', flat=True)
+    user_tickets = request.user.tickets.all()
+    user_reviews = request.user.reviews.all()
+    user_reviewed_tickets = user_reviews.values_list('ticket', flat=True)
     reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
 
     posts = sorted(
         chain(
-            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
-             tickets),
+            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in tickets),
             ({'type': 'review', 'object': review} for review in reviews),
-            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in
-             user_tickets),
+            ({'type': 'ticket', 'object': ticket, 'user_has_reviewed': ticket.id in user_reviewed_tickets} for ticket in user_tickets),
             ({'type': 'review', 'object': review} for review in user_reviews),
             ({'type': 'review', 'object': review} for review in reviews_on_user_tickets)
         ),
