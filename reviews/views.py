@@ -215,7 +215,7 @@ def delete_post(request, post_type, post_id):
         return HttpResponseBadRequest("Type de post invalide")
 
     if request.method == 'POST':
-        if request.POST.get('confirm') == 'yes':
+        if request.POST.get('confirm') == 'oui':
             post.delete()
         return redirect('user_posts')
 
