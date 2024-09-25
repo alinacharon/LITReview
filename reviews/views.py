@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Review, Ticket
 from .forms import ReviewForm, TicketForm
-
+from django.db.models import Q
 
 @login_required
 def feed(request):
@@ -25,7 +25,9 @@ def feed(request):
     user_tickets = request.user.tickets.all()
     user_reviews = request.user.reviews.all()
     user_reviewed_tickets = user_reviews.values_list('ticket', flat=True)
-    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(user=request.user)
+    reviews_on_user_tickets = Review.objects.filter(ticket__in=user_tickets).exclude(
+        Q(user=request.user) | Q(user__in=following_users)
+    )
 
     posts = sorted(
         chain(
